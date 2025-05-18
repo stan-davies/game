@@ -24,4 +24,10 @@ int blit(
 
 void flush_vb( );
 
+int vcont(
+        struct uvec     v
+);
+
+void free_vb( );
+
 #endif

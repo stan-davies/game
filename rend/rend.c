@@ -47,3 +47,13 @@ void flush_vb( ) {
         }
 }
 
+int vcont(
+        struct uvec     v
+) {
+        return v.x < viewbuf.dim.x && v.y < viewbuf.dim.y;
+}
+
+void free_vb( ) {
+        free(viewbuf.pxs);
+        viewbuf.pxs = NULL;
+}

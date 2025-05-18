@@ -16,5 +16,7 @@ int main() {
 
         flush_vb();
 
+        free_vb();
+
         return 0;
 }

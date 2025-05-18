@@ -23,5 +23,10 @@ int move(
                 player.pos.y + dir.y
         };
 
-        if (new.x
+        if (FALSE == vcont) {
+                return ERRF;
+        }
+
+        player.pos = new;
+}
 
