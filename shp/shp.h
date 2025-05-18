@@ -3,14 +3,19 @@
 
 typedef unsigned int    uint    ;
 
-struct cart {
+struct uvec {
         uint            x       ;
         uint            y       ;
 };
 
+struct vec {
+        int             x       ;
+        int             y       ;
+};
+
 struct rect {
-        struct cart     pos     ;
-        struct cart     sz      ;
+        struct uvec     pos     ;
+        struct uvec     sz      ;
 };
 
 #endif

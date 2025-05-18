@@ -15,8 +15,7 @@ struct pixel {
 };
 
 void init_vb(
-        uint            w       ,
-        uint            h
+        struct uvec     _dim
 );
 
 int blit(

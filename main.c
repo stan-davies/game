@@ -7,7 +7,8 @@ int main() {
                 5, 5
         };
 
-        init_vb(80, 20);
+        struct uvec dim = { 80, 20 };
+        init_vb(dim);
 
         if (ERRF == blit(r)) {
                 // =(
@@ -17,5 +18,3 @@ int main() {
 
         return 0;
 }
-
-

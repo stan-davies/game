@@ -7,18 +7,16 @@
 
 static struct {
         struct pixel   *pxs     ;
-        uint            w       ;
-        uint            h       ;
+        struct uvec     dim     ;
 } viewbuf;
 
 void init_vb(
-        uint            w       ,
-        uint            h
+        struct uvec     _dim
 ) {
-        viewbuf.w       = w;
-        viewbuf.h       = h;
-        viewbuf.pxs     = calloc(w * h, sizeof(struct pixel));
-        for (int i = 0; i < w * h; ++i) {
+        viewbuf.dim     = _dim;
+        int     sz      = viewbuf.dim.x * viewbuf.dim.y;
+        viewbuf.pxs     = calloc(sz, sizeof(struct pixel));
+        for (int i = 0; i < sz; ++i) {
                 viewbuf.pxs[i].c = 32;
         }
 }
@@ -26,13 +24,13 @@ void init_vb(
 int blit(
         struct rect     rct
 ) {
-        if (rct.pos.x >= viewbuf.w || rct.pos.y >= viewbuf.h) {
+        if (rct.pos.x >= viewbuf.dim.x || rct.pos.y >= viewbuf.dim.y) {
                 return ERRF;
         }
 
         for (int y = rct.pos.y; y < rct.pos.y + rct.sz.y; ++y) {
                 for (int x = rct.pos.x; x < rct.pos.x + rct.sz.x; ++x) {
-                        viewbuf.pxs[y * viewbuf.w + x].c = 65;
+                        viewbuf.pxs[y * viewbuf.dim.x + x].c = 65;
                 }
         }
 
@@ -41,9 +39,9 @@ int blit(
 
 void flush_vb( ) {
         system("clear");
-        for (int y = 0; y < viewbuf.h; ++y) {
-                for (int x = 0; x < viewbuf.w; ++x) {
-                        printf("%c", viewbuf.pxs[y * viewbuf.w + x].c);
+        for (int y = 0; y < viewbuf.dim.y; ++y) {
+                for (int x = 0; x < viewbuf.dim.x; ++x) {
+                        printf("%c", viewbuf.pxs[y * viewbuf.dim.x + x].c);
                 }
                 printf("\n");
         }
