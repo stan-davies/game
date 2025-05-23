@@ -2,20 +2,16 @@
 #define REND_H
 
 #include "shp/shp.h"
-
-struct colour {
-        uint            r       ;
-        uint            g       ;
-        uint            b       ;
-};
+#include <stddef.h>
 
 struct pixel {
         char            c       ;
-        struct  colour  col     ;
+//      int             colour  ;
 };
 
 struct text {
         struct pixel   *img     ;
+        struct uvec     dim     ;
         struct uvec     pos     ;
 };
 
@@ -38,5 +34,15 @@ int vcont(
 );
 
 void free_vb( );
+
+struct text make_t(
+        char           *img     ,
+        struct uvec     _dim    ,
+        struct uvec     _pos
+);
+
+void free_t(
+        struct text    *t
+);
 
 #endif

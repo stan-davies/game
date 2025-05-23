@@ -43,9 +43,8 @@ int blit(
 int blit_img(
         struct text     t
 ) {
-        // check position in the right place
-        if (t.pos.x < 0 || t.pos.x >= viewbuf.pos.x
-                || t.pos.y < 0 || t.pos.y >= viewbuf.pos.y) {
+        if (t.pos.x < 0 || t.pos.x >= viewbuf.dim.x
+                || t.pos.y < 0 || t.pos.y >= viewbuf.dim.y) {
                 return ERRF;
         }
 
@@ -53,22 +52,17 @@ int blit_img(
         struct pixel *read  = t.img;
         char    c;
 
-        for (;;) {
+        for (int i = 0; i < t.dim.x * t.dim.y; ++i) {
                 c = read->c;
-                switch (c) {
-                case 0:                         // null terminator
-                        goto exit;
-                case 10:                        // linefeed
-                        read++;
-                        write += viewbuf.dim.x;
-                        continue;
-                default:
-                        write->c = c;
-                        break;
+                read++;
+                if (i % t.dim.x == 0) {
+                        write += viewbuf.dim.x - t.dim.x;
                 }
+
+                write->c = c;
+                write++;
         }
 
-exit:
         return FINE;
 }
         
@@ -104,4 +98,31 @@ int vcont(
 void free_vb( ) {
         free(viewbuf.pxs);
         viewbuf.pxs = NULL;
+}
+
+struct text make_t(
+        char           *img     ,
+        struct uvec     _dim    ,
+        struct uvec     _pos
+) {
+        struct text t = {
+                .img = calloc(_dim.x * _dim.y, sizeof(struct pixel)),
+                .dim = _dim,
+                .pos = _pos,
+        };
+
+        struct pixel c;
+        for (int i = 0; i < t.dim.x * t.dim.y; ++i) {
+                c.c = img[i];
+                t.img[i] = c;
+        }
+
+        return t;
+}
+
+void free_t(
+        struct text    *t
+) {
+        free(t->img);
+        t->img = NULL;
 }
