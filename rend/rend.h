@@ -14,12 +14,21 @@ struct pixel {
         struct  colour  col     ;
 };
 
+struct text {
+        struct pixel   *img     ;
+        struct uvec     pos     ;
+};
+
 void init_vb(
         struct uvec     _dim
 );
 
 int blit(
         struct rect     rct
+);
+
+int blit_img(
+        struct text     t
 );
 
 void flush_vb( );

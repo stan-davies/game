@@ -5,6 +5,9 @@
 
 #include "util.h"
 
+#define PIPE_CHAR       124
+#define PLUS_CHAR       43
+
 static struct {
         struct pixel   *pxs     ;
         struct uvec     dim     ;
@@ -15,7 +18,7 @@ void init_vb(
 ) {
         viewbuf.dim     = _dim;
         int     sz      = viewbuf.dim.x * viewbuf.dim.y;
-        viewbuf.pxs     = calloc(sz, sizeof(struct pixel));
+        viewbuf.pxs     = malloc(sz * sizeof(struct pixel));
         for (int i = 0; i < sz; ++i) {
                 viewbuf.pxs[i].c = 32;
         }
@@ -37,13 +40,58 @@ int blit(
         return FINE;
 }
 
+int blit_img(
+        struct text     t
+) {
+        // check position in the right place
+        if (t.pos.x < 0 || t.pos.x >= viewbuf.pos.x
+                || t.pos.y < 0 || t.pos.y >= viewbuf.pos.y) {
+                return ERRF;
+        }
+
+        struct pixel *write = &(viewbuf.pxs[t.pos.y * viewbuf.dim.x + t.pos.x]);
+        struct pixel *read  = t.img;
+        char    c;
+
+        for (;;) {
+                c = read->c;
+                switch (c) {
+                case 0:                         // null terminator
+                        goto exit;
+                case 10:                        // linefeed
+                        read++;
+                        write += viewbuf.dim.x;
+                        continue;
+                default:
+                        write->c = c;
+                        break;
+                }
+        }
+
+exit:
+        return FINE;
+}
+        
 void flush_vb( ) {
         system("clear");
-        for (int y = 0; y < viewbuf.dim.y; ++y) {
-                for (int x = 0; x < viewbuf.dim.x; ++x) {
-                        printf("%c", viewbuf.pxs[y * viewbuf.dim.x + x].c);
+
+        char pad = PLUS_CHAR;
+
+        for (int y = 0; y <= viewbuf.dim.y + 1; ++y) {
+                if (0 == y || viewbuf.dim.y + 1 == y) {
+                        pad = PLUS_CHAR;
+                } else {
+                        pad = PIPE_CHAR;
                 }
-                printf("\n");
+                printf("%c", pad);
+                for (int x = 0; x < viewbuf.dim.x; ++x) {
+                        if (PLUS_CHAR == pad) {
+                                printf("-");
+                        } else {
+                                printf("%c", viewbuf.pxs[(y - 1) * viewbuf.dim.x + x].c);
+                        }
+                }
+                printf("%c\n", pad);
         }
 }
 
