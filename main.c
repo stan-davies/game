@@ -45,6 +45,7 @@ int main() {
 
         free_vb();
         free_t(&t);
+        free_t(&t2);
 
         return 0;
 }
