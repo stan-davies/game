@@ -17,7 +17,7 @@ struct text make_t(
                 .bb  = { _pos, _dim }
         };
 
-        struct pixel c = { .col = COL_FALL };
+        struct pixel c = { .col = COL_WHITE };
         int r = 0;
         int col;
         int esc = FALSE;
@@ -38,7 +38,6 @@ struct text make_t(
                 }
 
                 t.img[r++] = c;
-                c.col = COL_FALL;
         }
 
         return t;

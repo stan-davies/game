@@ -50,21 +50,16 @@ int blit_img(
                                 t.bb.pos.y * viewbuf.dim.x + t.bb.pos.x]);
         struct pixel   *read  = t.img;
         struct uvec     curr  = { 0, 0 };
-        int             carry = COL_FALL;
 
         for (int i = 0; i < t.bb.dim.x * t.bb.dim.y; ++i) {
-                if (read->col != COL_FALL) {
-                        carry = read->col;
+                if (32 != read->c) {
+                        curr.x = t.bb.pos.x + (i % t.bb.dim.x);
+                        curr.y = t.bb.pos.y + (i / t.bb.dim.x);
+                        if (vcont(curr)) {
+                                *write = *read;
+                        }
                 }
 
-                curr.x = t.bb.pos.x + (i % t.bb.dim.x);
-                curr.y = t.bb.pos.y + (i / t.bb.dim.x);
-                if (vcont(curr)) {
-                        if (0 == curr.x || t.bb.pos.x == curr.x) {
-                                read->col = carry;
-                        }
-                        *write = *read;
-                }
                 write++;
 
                 read++;
@@ -80,17 +75,21 @@ void flush_vb( ) {
         system("clear");
 
         struct pixel curr;
+        int col = COL_FALL;
 
         tb_border();
         for (int y = 0; y < viewbuf.dim.y; ++y) {
                 printf("|");
                 for (int x = 0; x < viewbuf.dim.x; ++x) {
                         curr = viewbuf.pxs[y * viewbuf.dim.x + x];
-
-                        colourise(curr.col);
+                        if (curr.col != col) {
+                                colourise(curr.col);
+                                col = curr.col;
+                        }
                         printf("%c", curr.c);
                 }
                 colourise(COL_WHITE);
+                col = COL_FALL;
                 printf("|\n");
         }
         tb_border();
@@ -107,21 +106,12 @@ static void tb_border() {
 static void colourise(
         int             col
 ) {
-        if (COL_FALL == col) {
-                return;
-        } else if (COL_WHITE == col) 
-
-        printf("\033[");
-        switch (col) {
-        case COL_FALL:
-                break;
-        case COL_WHITE:
+        if (COL_WHITE == col) {
                 printf("\033[0m");
-                break;
-        default:
-                printf("\033[%d;3%dm", col / 8, col % 8);
-                break;
+                return;
         }
+
+        printf("\033[%d;3%dm", col / 8, col % 8);
 }
 
 int vcont(
