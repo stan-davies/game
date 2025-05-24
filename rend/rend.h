@@ -2,26 +2,20 @@
 #define REND_H
 
 #include "shp/shp.h"
+#include "text.h"
+
 #include <stddef.h>
 
-struct pixel {
-        char            c       ;
-//      int             colour  ;
-};
 
-struct text {
-        struct pixel   *img     ;
-        struct uvec     dim     ;
-        struct uvec     pos     ;
-};
+// --- 
 
 void init_vb(
         struct uvec     _dim
 );
 
-int blit(
-        struct rect     rct
-);
+void free_vb( );
+
+// --- 
 
 int blit_img(
         struct text     t
@@ -29,20 +23,10 @@ int blit_img(
 
 void flush_vb( );
 
+// --- 
+
 int vcont(
         struct uvec     v
-);
-
-void free_vb( );
-
-struct text make_t(
-        char           *img     ,
-        struct uvec     _dim    ,
-        struct uvec     _pos
-);
-
-void free_t(
-        struct text    *t
 );
 
 #endif

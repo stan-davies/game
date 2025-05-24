@@ -1,24 +1,12 @@
 #include "rend/rend.h"
+#include "rend/text.h"
 #include "util.h"
 
 #include <stdio.h>
 
 int main() {
-        struct rect r = {
-                { 5, 5 },
-                { 5, 5 }
-        };
-
         struct uvec dim = { 80, 20 };
         init_vb(dim);
-
-        if (ERRF == blit(r)) {
-                printf("Problem!\n");
-                return 0;
-                // =(
-        }
-
-        printf("Okay...\n");
 
         struct uvec i_pos = { 40, 10 };
         struct uvec i_dim = { 3 , 6  };
@@ -36,8 +24,13 @@ int main() {
                 t2_pos
         );
 
-        if (ERRF == blit_img(t) || ERRF == blit_img(t2)) {
+        if (ERRF == blit_img(t)) {
                 printf("Problem!\n");
+                return 0;
+        }
+
+        if (ERRF == blit_img(t2)) {
+                printf("Problem 2!\n");
                 return 0;
         }
 

@@ -15,7 +15,7 @@ struct vec {
 
 struct rect {
         struct uvec     pos     ;
-        struct uvec     sz      ;
+        struct uvec     dim     ;
 };
 
 #endif
