@@ -46,18 +46,19 @@ int blit_img(
                 return ERRF;
         }
 
-        struct pixel *write = &(viewbuf.pxs[t.bb.pos.y * viewbuf.dim.x + t.bb.pos.x]);
-        struct pixel *read  = t.img;
-        struct uvec   curr = { 0, 0 };
-        int           carry = COL_FALL;
+        struct pixel   *write = &(viewbuf.pxs[
+                                t.bb.pos.y * viewbuf.dim.x + t.bb.pos.x]);
+        struct pixel   *read  = t.img;
+        struct uvec     curr  = { 0, 0 };
+        int             carry = COL_FALL;
 
         for (int i = 0; i < t.bb.dim.x * t.bb.dim.y; ++i) {
                 if (read->col != COL_FALL) {
                         carry = read->col;
                 }
 
-                curr.x = i / viewbuf.dim.x;
-                curr.y = i % viewbuf.dim.x;
+                curr.x = t.bb.pos.x + (i % t.bb.dim.x);
+                curr.y = t.bb.pos.y + (i / t.bb.dim.x);
                 if (vcont(curr)) {
                         if (0 == curr.x || t.bb.pos.x == curr.x) {
                                 read->col = carry;
@@ -87,8 +88,6 @@ void flush_vb( ) {
                         curr = viewbuf.pxs[y * viewbuf.dim.x + x];
 
                         colourise(curr.col);
-                        
-//                        printf(".");
                         printf("%c", curr.c);
                 }
                 colourise(COL_WHITE);

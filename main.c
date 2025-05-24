@@ -24,7 +24,7 @@ int main() {
                 t2_pos
         );
 
-        struct uvec test_pos = { 0, 5 };
+        struct uvec test_pos = { 5, 5 };
         struct uvec test_dim = { 2, 2 };
         struct text test = make_t(
                 "^9AAAA^E",
