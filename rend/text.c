@@ -2,6 +2,11 @@
 
 #include <stdlib.h>
 
+#include "util.h"
+
+#define CHAR_CIRCUM     94
+#define CHAR_ZERO       48
+
 struct text make_t(
         char           *img     ,
         struct uvec     _dim    ,
@@ -12,10 +17,28 @@ struct text make_t(
                 .bb  = { _pos, _dim }
         };
 
-        struct pixel c;
-        for (int i = 0; i < t.bb.dim.x * t.bb.dim.y; ++i) {
+        struct pixel c = { .col = COL_FALL };
+        int r = 0;
+        int col;
+        int esc = FALSE;
+        for (int i = 0; ; ++i) {
                 c.c = img[i];
-                t.img[i] = c;
+                if (CHAR_CIRCUM == c.c) {
+                        esc = TRUE;
+                        continue;
+                }
+                if (esc) {
+                        col = c.c - CHAR_ZERO;
+                        if (col > COL_WHITE) {
+                                break;
+                        }
+                        c.col = col;
+                        esc = FALSE;
+                        continue;
+                }
+
+                t.img[r++] = c;
+                c.col = COL_FALL;
         }
 
         return t;

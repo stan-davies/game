@@ -13,14 +13,24 @@ static struct {
         struct uvec     dim     ;
 } viewbuf;
 
+static void tb_border();
+
+static void colourise(
+        int             col
+);
+
 void init_vb(
         struct uvec     _dim
 ) {
         viewbuf.dim     = _dim;
         int     sz      = viewbuf.dim.x * viewbuf.dim.y;
         viewbuf.pxs     = malloc(sz * sizeof(struct pixel));
+        struct pixel blank = {
+                .c = 32,
+                .col = COL_L_GRAY
+        };
         for (int i = 0; i < sz; ++i) {
-                viewbuf.pxs[i].c = 32;
+                viewbuf.pxs[i] = blank;
         }
 }
 
@@ -38,23 +48,28 @@ int blit_img(
 
         struct pixel *write = &(viewbuf.pxs[t.bb.pos.y * viewbuf.dim.x + t.bb.pos.x]);
         struct pixel *read  = t.img;
-        char    c;
         struct uvec   curr = { 0, 0 };
+        int           carry = COL_FALL;
 
         for (int i = 0; i < t.bb.dim.x * t.bb.dim.y; ++i) {
-                c = read->c;
+                if (read->col != COL_FALL) {
+                        carry = read->col;
+                }
+
+                curr.x = i / viewbuf.dim.x;
+                curr.y = i % viewbuf.dim.x;
+                if (vcont(curr)) {
+                        if (0 == curr.x || t.bb.pos.x == curr.x) {
+                                read->col = carry;
+                        }
+                        *write = *read;
+                }
+                write++;
+
                 read++;
-                if (i % t.bb.dim.x == 0) {
+                if ((i + 1) % t.bb.dim.x == 0) {
                         write += viewbuf.dim.x - t.bb.dim.x;
                 }
-
-                curr.x = i % viewbuf.dim.x;
-                curr.y = i / viewbuf.dim.y;
-                if (vcont(curr)) {
-                        write->c = c;
-                }
-
-                write++;
         }
 
         return FINE;
@@ -63,23 +78,50 @@ int blit_img(
 void flush_vb( ) {
         system("clear");
 
-        char pad = PLUS_CHAR;
+        struct pixel curr;
 
-        for (int y = 0; y <= viewbuf.dim.y + 1; ++y) {
-                if (0 == y || viewbuf.dim.y + 1 == y) {
-                        pad = PLUS_CHAR;
-                } else {
-                        pad = PIPE_CHAR;
-                }
-                printf("%c", pad);
+        tb_border();
+        for (int y = 0; y < viewbuf.dim.y; ++y) {
+                printf("|");
                 for (int x = 0; x < viewbuf.dim.x; ++x) {
-                        if (PLUS_CHAR == pad) {
-                                printf("-");
-                        } else {
-                                printf("%c", viewbuf.pxs[(y - 1) * viewbuf.dim.x + x].c);
-                        }
+                        curr = viewbuf.pxs[y * viewbuf.dim.x + x];
+
+                        colourise(curr.col);
+                        
+//                        printf(".");
+                        printf("%c", curr.c);
                 }
-                printf("%c\n", pad);
+                colourise(COL_WHITE);
+                printf("|\n");
+        }
+        tb_border();
+}
+
+static void tb_border() {
+        printf("+");
+        for (int x = 0; x < viewbuf.dim.x; ++x) {
+                printf("-");
+        }
+        printf("+\n");
+}
+
+static void colourise(
+        int             col
+) {
+        if (COL_FALL == col) {
+                return;
+        } else if (COL_WHITE == col) 
+
+        printf("\033[");
+        switch (col) {
+        case COL_FALL:
+                break;
+        case COL_WHITE:
+                printf("\033[0m");
+                break;
+        default:
+                printf("\033[%d;3%dm", col / 8, col % 8);
+                break;
         }
 }
 
