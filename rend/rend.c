@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "util.h"
+#include "colour/colour.h"
 
 #define PIPE_CHAR       124
 #define PLUS_CHAR       43
@@ -15,9 +16,6 @@ static struct {
 
 static void tb_border();
 
-static void colourise(
-        int             col
-);
 
 void init_vb(
         struct uvec     _dim
@@ -103,16 +101,6 @@ static void tb_border() {
         printf("+\n");
 }
 
-static void colourise(
-        int             col
-) {
-        if (COL_WHITE == col) {
-                printf("\033[0m");
-                return;
-        }
-
-        printf("\033[%d;3%dm", col / 8, col % 8);
-}
 
 int vcont(
         struct uvec     v
