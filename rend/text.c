@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "util.h"
+#include "colour/colour.h"
 
 #define CHAR_CIRCUM     94
 #define CHAR_ZERO       48

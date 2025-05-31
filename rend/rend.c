@@ -77,7 +77,7 @@ void flush_vb( ) {
 
         tb_border();
         for (int y = 0; y < viewbuf.dim.y; ++y) {
-                printf("|");
+                printf("│");
                 for (int x = 0; x < viewbuf.dim.x; ++x) {
                         curr = viewbuf.pxs[y * viewbuf.dim.x + x];
                         if (curr.col != col) {
@@ -88,7 +88,7 @@ void flush_vb( ) {
                 }
                 colourise(COL_WHITE);
                 col = COL_FALL;
-                printf("|\n");
+                printf("│\n");
         }
         tb_border();
 }
@@ -96,7 +96,7 @@ void flush_vb( ) {
 static void tb_border() {
         printf("+");
         for (int x = 0; x < viewbuf.dim.x; ++x) {
-                printf("-");
+                printf("–");
         }
         printf("+\n");
 }
