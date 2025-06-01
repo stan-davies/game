@@ -1,12 +1,15 @@
 #include "rend/rend.h"
 #include "rend/text.h"
 #include "input/input.h"
+#include "player/player.h"
 #include "util.h"
 
 #include <stdio.h>
 
 int main() {
         init_actor();
+        struct uvec ppos = { 5, 5 };
+        init_player(ppos);
 
         struct action inp = getact();
 
@@ -38,9 +41,15 @@ int main() {
                 break;
         default:
                 printf("uncertain");
-                break;
+                goto exit;
         }
         printf(" %d times\n", inp.mod);
+
+        do_cmd(inp);
+
+exit:
+        free_player();
+        free_actor();
 
         return 0;
 

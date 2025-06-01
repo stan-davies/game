@@ -21,6 +21,8 @@ struct action {
 
 void init_actor( );
 
+void free_actor( );
+
 struct action getact( );
 
 #endif

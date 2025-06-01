@@ -43,6 +43,12 @@ void init_actor( ) {
         inbuf.scratch = inbuf.base;
 }
 
+void free_actor( ) {
+        free(inbuf.base);
+        inbuf.base = NULL;
+        inbuf.scratch = NULL;
+}
+
 struct action getact( ) {
         clean();
 
