@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "util.h"
+#include "util/util.h"
 #include "colour/colour.h"
 
 #define CHAR_CIRCUM     94

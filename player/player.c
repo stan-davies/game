@@ -1,10 +1,13 @@
 #include "player.h"
 
+#include "rend/text.h"
+#include "rend/rend.h"
+
 #include <stdio.h>
 
 static struct {
         struct uvec     pos     ;
-        char            rep     ;
+        struct text     t       ;
         // inventory, other data, blah blah blah
 } player;
 
@@ -12,10 +15,14 @@ void init_player(
         struct uvec     _pos
 ) {
         player.pos = _pos;
-        player.rep = 65;
+
+        struct uvec dim = { 1, 1 };
+        player.t = make_t("A", dim, player.pos);
 }
 
-void free_player( ) { }
+void free_player( ) {
+        free_t(&player.t);
+}
 
 void do_cmd(
         struct action   cmd
@@ -46,4 +53,12 @@ void do_cmd(
 //        for (int u = 0; u < act.mod; ++u) {
 //                use(object);
 //        }
+}
+
+void draw_player( ) {
+        // Would not normally update a texture like this but whatever lol.
+        player.t.bb.pos = player.pos;
+        blit_img(player.t);
+        // Can't error as player is never off screen due to movement checks. (I
+        // have not yet implemented said checks but the logic still checks out).
 }

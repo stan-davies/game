@@ -1,7 +1,7 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include "shp/shp.h"
+#include "util/shp.h"
 
 struct pixel {
         char            c       ;

@@ -1,13 +1,10 @@
 #ifndef REND_H
 #define REND_H
 
-#include "shp/shp.h"
+#include "util/shp.h"
 #include "text.h"
 
 #include <stddef.h>
-
-
-// --- 
 
 void init_vb(
         struct uvec     _dim
@@ -15,15 +12,11 @@ void init_vb(
 
 void free_vb( );
 
-// --- 
-
 int blit_img(
         struct text     t
 );
 
 void flush_vb( );
-
-// --- 
 
 int vcont(
         struct uvec     v
