@@ -14,6 +14,11 @@ static struct {
         struct uvec     dim     ;
 } viewbuf;
 
+static struct pixel blank = {
+        .c      =       32,
+        .col    =       COL_L_GRAY
+};
+
 static void tb_border();
 
 
@@ -23,10 +28,6 @@ void init_vb(
         viewbuf.dim     = _dim;
         int     sz      = viewbuf.dim.x * viewbuf.dim.y;
         viewbuf.pxs     = malloc(sz * sizeof(struct pixel));
-        struct pixel blank = {
-                .c = 32,
-                .col = COL_L_GRAY
-        };
         for (int i = 0; i < sz; ++i) {
                 viewbuf.pxs[i] = blank;
         }
@@ -74,11 +75,6 @@ int blit_img(
 void flush_vb( ) {
         system("clear");
 
-        struct pixel blank = { 
-                .c = 0,
-                .col = COL_FALL
-        };
-
         struct pixel curr;
         int col = COL_FALL;
 
@@ -92,8 +88,7 @@ void flush_vb( ) {
                                 col = curr.col;
                         }
                         printf("%c", curr.c);
-//                        viewbuf.pxs[y * viewbuf.dim.x + x].c = 0;
-//                        viewbuf.pxs[y * viewbuf.dim.x + x].col = COL_FALL;
+                        viewbuf.pxs[y * viewbuf.dim.x + x] = blank;
                 }
                 colourise(COL_WHITE);
                 col = COL_FALL;
