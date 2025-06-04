@@ -46,6 +46,7 @@ int blit_img(
 
         struct pixel   *write = &(viewbuf.pxs[
                                 t.bb.pos.y * viewbuf.dim.x + t.bb.pos.x]);
+        printf("write head got\n");
         struct pixel   *read  = t.img;
         struct uvec     curr  = { 0, 0 };
 
@@ -55,6 +56,7 @@ int blit_img(
                         curr.y = t.bb.pos.y + (i / t.bb.dim.x);
                         if (vcont(curr)) {
                                 *write = *read;
+                                printf("write %d\n", i);
                         }
                 }
 

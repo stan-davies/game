@@ -17,7 +17,7 @@ void init_player(
         player.pos = _pos;
 
         struct uvec dim = { 1, 1 };
-        player.t = make_t("A", dim, player.pos);
+        player.t = make_t("A^E", dim, player.pos);
 }
 
 void free_player( ) {
@@ -35,8 +35,8 @@ void do_cmd(
 
         if (!(cmd.act >> 2)) {                  // use bit == 0
                 int mod = cmd.act % 2 ? cmd.mod : -cmd.mod;
-                player.pos.x += target.x * mod;
-                player.pos.y += target.y * mod;
+                player.pos.x += target.x *  mod;
+                player.pos.y += target.y * -mod;        // y extends downwards
                 printf("to   : (%d, %d)\n", player.pos.x, player.pos.y);
                 // some kind of "if you go outside these boundaries, parallax"
                 return;
@@ -58,6 +58,7 @@ void do_cmd(
 void draw_player( ) {
         // Would not normally update a texture like this but whatever lol.
         player.t.bb.pos = player.pos;
+        printf("moved\n");
         blit_img(player.t);
         // Can't error as player is never off screen due to movement checks. (I
         // have not yet implemented said checks but the logic still checks out).

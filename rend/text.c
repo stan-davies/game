@@ -22,7 +22,7 @@ struct text make_t(
         int r = 0;
         int col;
         int esc = FALSE;
-        for (int i = 0; ; ++i) {
+        for (int i = 0;; ++i) {
                 c.c = img[i];
                 if (CHAR_CIRCUM == c.c) {
                         esc = 1 - esc;

@@ -16,7 +16,7 @@ int main() {
         struct uvec w_pos = { 35, 15 };
         struct uvec w_dim = { 25, 1  };
         struct text w = make_t(
-                "^4~~~~~~~~~~~~~~~~~~~~~~~~~~E",
+                "^4~~~~~~~~~~~~~~~~~~~~~~~~~~^E",
                 w_dim,
                 w_pos
         );
@@ -84,9 +84,14 @@ int main() {
         printf("all done!\n");
 
 exit:
+        printf("FREE\n");
         free_t(&w);
+        printf("1\n");
         free_t(&t);
+        printf("2\n");
         free_t(&t2);
+        printf("3\n");
         prog_free();
+        printf("4\n");
         return 0;
 }
