@@ -105,7 +105,7 @@ static int stoa(
         
         int di = inbuf.scratch - inbuf.base;
 
-        if (MAX_CMD_LEN == di) {
+        if (MAX_CMD_LEN <= di) {
                 return ERRF;
         } else if (0 == di) {
                 act->mod = 1;
@@ -140,10 +140,12 @@ static int stoa(
                         act->act |= USE_BIT;
                         break;
                 default:
+                        act->act = INVALID_ACTION;
                         return ERRF;
                 }
                 inbuf.scratch++;
                 if (inbuf.scratch - inbuf.base == MAX_CMD_LEN) {
+                        act->act = INVALID_ACTION;
                         return ERRF;
                 }
         }
