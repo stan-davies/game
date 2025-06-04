@@ -13,6 +13,8 @@
 #define US_DOWN         6       // 110
 #define US_UP           7       // 111
 
+#define CMD_QUIT        8
+
 
 struct action {
         int             act     ;

@@ -1,7 +1,5 @@
 #include "util.h"
 
-#include <stdio.h>
-
 #define PLAYER_DEFAULT_X        10
 #define PLAYER_DEFAULT_Y        10
 
@@ -20,9 +18,6 @@ void prog_init( ) {
 
 void prog_free( ) {
         free_vb();
-        printf("vb gone\n");
         free_player();
-        printf("player gone\n");
         free_actor();
-        printf("actor gone\n");
 }

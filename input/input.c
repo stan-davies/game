@@ -1,7 +1,7 @@
 #include "input.h"
 #include "util/util.h"
 
-#include <stdio.h>
+#include <stdio.h>              // Used for more than just `printf`!
 #include <stdlib.h>
 
 #define MAX_CMD_LEN     8
@@ -11,6 +11,7 @@
 #define CHAR_K          107
 #define CHAR_L          108
 #define CHAR_U          117
+#define CHAR_Q          113
 // this is of course lowercase too
 #define CHAR_LF         10
 
@@ -32,7 +33,7 @@ static void clean( );
 
 static void readin( );
 
-static int stoa(
+static void stoa(
         struct action  *act
 );
 
@@ -58,9 +59,7 @@ struct action getact( ) {
                 .act = INVALID_ACTION   ,
                 .mod = INVALID_ACTION   ,
         };
-        if (ERRF == stoa(&act)) {
-                printf("error in stoa\n");
-        }
+        stoa(&act);
         return act;
 }
 
@@ -89,7 +88,7 @@ static void readin( ) {
         }
 }
 
-static int stoa(
+static void stoa(
         struct action  *act
 ) {
         inbuf.scratch = inbuf.base;
@@ -106,7 +105,7 @@ static int stoa(
         int di = inbuf.scratch - inbuf.base;
 
         if (MAX_CMD_LEN <= di) {
-                return ERRF;
+                return;                 // invalid input
         } else if (0 == di) {
                 act->mod = 1;
         } else {
@@ -114,7 +113,7 @@ static int stoa(
                 *inbuf.scratch = 0;
                 int m = atoi(inbuf.base);
                 if (m <= 0) {
-                        return ERRF;
+                        return;         // invalid input
                         // can't be less than 0 as only numerics are collected
                 }
                 act->mod = m;
@@ -126,30 +125,33 @@ static int stoa(
                 switch (*inbuf.scratch) {
                 case CHAR_L:
                         act->act |= RIGHT_BIT;
-                        goto end;
+                        return;
                 case CHAR_H:
                         act->act |= LEFT_BIT;
-                        goto end;
+                        return;
                 case CHAR_J:
                         act->act |= DOWN_BIT;
-                        goto end;
+                        return;
                 case CHAR_K:
                         act->act |= UP_BIT;
-                        goto end;
+                        return;
                 case CHAR_U:
                         act->act |= USE_BIT;
                         break;
+                case CHAR_Q:
+                        if (act->mod == 1) {
+                                act->act = CMD_QUIT;
+                                return;
+                        }
+                        // This is intended to fall into default. So let it.
                 default:
                         act->act = INVALID_ACTION;
-                        return ERRF;
+                        return;         // invalid input
                 }
                 inbuf.scratch++;
                 if (inbuf.scratch - inbuf.base == MAX_CMD_LEN) {
                         act->act = INVALID_ACTION;
-                        return ERRF;
+                        return;         // invalid input
                 }
         }
-
-end:
-        return FINE;
 }

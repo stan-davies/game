@@ -3,13 +3,7 @@
 #include <stdio.h>
 
 int main() {
-        printf("Start strong!\n");
-
-
         prog_init();
-
-
-        printf("Keep up...\n");
 
         // ---- create textures ----
 
@@ -37,8 +31,6 @@ int main() {
                 t2_pos
         );
 
-        printf("Textures!\n");
-
         for (;;) {
                 // ---- blit textures ---- 
 
@@ -57,41 +49,26 @@ int main() {
                         goto exit;
                 }
 
-                printf("blit\n");
-
                 draw_player();
-
-                printf("player blit\n");
 
                 // ---- stuff happens ----
 
                 flush_vb();
 
-                printf("flush\n");
-
                 struct action inp = getact();
-                if (inp.act == INVALID_ACTION || inp.mod == INVALID_ACTION) {
+                if (INVALID_ACTION == inp.act || INVALID_ACTION == inp.mod) {
+                        continue;
+                } else if (CMD_QUIT == inp.act) {
                         break;
                 }
 
-                printf("take input\n");
-
                 do_cmd(inp);
-
-                printf("processed\n");
         }
 
-        printf("all done!\n");
-
 exit:
-        printf("FREE\n");
         free_t(&w);
-        printf("1\n");
         free_t(&t);
-        printf("2\n");
         free_t(&t2);
-        printf("3\n");
         prog_free();
-        printf("4\n");
         return 0;
 }
