@@ -1,6 +1,11 @@
 #include "world.h"
 
+#include "util/util.h"
+#include "util/shp.h"
+#include "rend/text.h"
+
 #include <stdio.h>
+#include <stdlib.h>
 
 #define STAT_NO 0
 #define STAT_RT 0
@@ -8,7 +13,21 @@
 #define STAT_RH 2
 #define STAT_RX 3
 #define STAT_RY 4
+#define STAT_RC 5
 #define STAT_EE 6
+
+#define CHAR_W          87
+#define CHAR_H          72
+#define CHAR_X          88  
+#define CHAR_Y          89
+#define CHAR_T          84
+#define CHAR_C          67
+#define CHAR_E          69
+#define CHAR_CIRCUM     94
+
+#define WORLD_FILE      "world"
+#define MAX_OBJ_C       32
+#define MAX_LINE_LEN    64
 
 static struct {
         int             obj_c   ;
@@ -17,7 +36,7 @@ static struct {
 
 static void read_data( );
 
-static void add_tex(
+static int add_tex(
         char           *line
 );
 
@@ -38,19 +57,26 @@ static void set_val(
 void init_world( ) {
         world.obj_c = 0;
         world.texmap = calloc(MAX_OBJ_C, sizeof(struct text));
-
-        // read file
-        // establish structure
-        // read world data from file
+        read_data();
 }
 
-void free_world( ) {
+void free_world( ) { }
+
+int blit_world( ) {
+        for (int i = 0; i < world.obj_c; ++i) {
+                if (ERRF == blit_img(world.texmap[i])) {
+                        return ERRF;
+                }
+        }
+
+        return FINE;
 }
 
 static void read_data( ) {
         FILE *f = fopen(WORLD_FILE, "r");
         if (NULL == f) {
                 // error
+                return;
         }
 
         char *line = calloc(MAX_LINE_LEN, sizeof(char));
@@ -71,12 +97,21 @@ static void read_data( ) {
 static int add_tex(
         char           *line
 ) {
+        static int obj_c = 0;           // only initialised once
+        static int c_found = FALSE;
+        
         struct text t = decode_line(line);
 
-        world.texmap[world.obj_c++] = t;
-        if (world.obj_c >= MAX_OBJ_C) {
+        if (NULL == t.img) {
+                world.obj_c = t.bb.pos.x;
+                c_found = TRUE;
+                return TRUE;
+        } else if (FALSE == c_found) {
                 return FALSE;
         }
+
+        world.texmap[obj_c++] = t;
+        return obj_c < world.obj_c;
 }
 
 static struct text decode_line(
@@ -97,6 +132,10 @@ static struct text decode_line(
                 if (stat > STAT_NO) {
                         *lsc = 0;
                         set_val(atoi(beg), stat, &bb);
+                        if (STAT_RC == stat) {
+                                struct text t = { NULL, bb };
+                                return t;
+                        }
                 }
                 
                 stat = get_stat(*(++lsc));
@@ -107,7 +146,7 @@ static struct text decode_line(
                 continue;
         }
 
-        return make_t(bb.dim, bb.pos, beg);     // reads upto ^E !!
+        return make_t(beg, bb.dim, bb.pos);     // reads upto ^E !!
 }
 
 static int get_stat(
@@ -124,10 +163,11 @@ static int get_stat(
                 return STAT_RY;
         case CHAR_T:
                 return STAT_RT;
+        case CHAR_C:
+                return STAT_RC;
         case CHAR_E:
-                return STAT_EE;
         default:
-                return /* aaaaa!!! */
+                return STAT_EE;
         }
 }
 
@@ -136,20 +176,24 @@ static void set_val(
         int             stat    ,
         struct rect    *bb
 ) {
-        switch (ident) {
-        case CHAR_W:
+        switch (stat) {
+        case STAT_RW:
                 bb->dim.x = val;
                 break;
-        case CHAR_H:
+        case STAT_RH:
                 bb->dim.y = val;
                 break;
-        case CHAR_X:
+        case STAT_RX:
                 bb->pos.x = val;
                 break;
-        case CHAR_Y:
+        case STAT_RY:
                 bb->pos.y = val;
                 break;
+        case STAT_RC:
+                bb->pos.x = val;
+                break;
         default:
+                // inaccessible I believe
                 break;
         }
 }

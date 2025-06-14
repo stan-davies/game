@@ -5,6 +5,7 @@
 int main() {
         prog_init();
 
+/*
         // ---- create textures ----
 
         struct uvec w_pos = { 35, 15 };
@@ -30,10 +31,11 @@ int main() {
                 t2_dim,
                 t2_pos
         );
+*/
 
         for (;;) {
                 // ---- blit textures ---- 
-
+/*
                 if (ERRF == blit_img(w)) {
                         printf("Problem 0!\n");
                         goto exit;
@@ -48,8 +50,13 @@ int main() {
                         printf("Problem 2!\n");
                         goto exit;
                 }
+*/
+                if (ERRF == blit_world()) {
+                        printf("Problem blitting world.\n");
+                        goto exit;
+                }
 
-                draw_player();
+//                draw_player();
 
                 // ---- stuff happens ----
 
@@ -62,13 +69,15 @@ int main() {
                         break;
                 }
 
-                do_cmd(inp);
+//                do_cmd(inp);
         }
 
 exit:
+/*
         free_t(&w);
         free_t(&t);
         free_t(&t2);
+*/
         prog_free();
         return 0;
 }
