@@ -9,6 +9,8 @@
 #define PIPE_CHAR       124
 #define PLUS_CHAR       43
 
+#define BTP_PADDING     5       // Border-to-Player padding
+
 static struct {
         struct pixel   *pxs     ;
         struct uvec     dim     ;
@@ -20,7 +22,6 @@ static struct pixel blank = {
 };
 
 static void tb_border();
-
 
 void init_vb(
         struct uvec     _dim
@@ -112,4 +113,8 @@ int vcont(
         return v.x < viewbuf.dim.x && v.y < viewbuf.dim.y;
 }
 
-
+int yin_padded(
+        int             y
+) {
+        return y - BTP_PADDING > 0 && y + BTP_PADDING < viewbuf.dim.y;
+}

@@ -10,9 +10,13 @@ void init_player(
 
 void free_player( );
 
-void do_cmd(
-        struct action   cmd
+void move_player(
+        int             cmd
 );
+
+//void do_cmd(
+//        struct action   cmd
+//);
 
 void draw_player( );
 

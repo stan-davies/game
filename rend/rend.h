@@ -22,4 +22,8 @@ int vcont(
         struct uvec     v
 );
 
+int yin_padded(
+        int             y
+);
+
 #endif
