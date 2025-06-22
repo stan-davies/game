@@ -15,14 +15,14 @@ void prog_init( ) {
         struct uvec dim = { DEFAULT_SCREEN_W, DEFAULT_SCREEN_H };
         init_vb(dim);
 
-        init_spawn();
+        init_carrier();
 
 //        init_world();
 }
 
 void prog_free( ) {
 //        free_world();
-        free_spawn();
+        free_carrier();
         free_vb();
         free_player();
         free_actor();

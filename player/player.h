@@ -8,16 +8,24 @@ void init_player(
         struct uvec     pos
 );
 
-void free_player( );
+void free_player(
+        void
+);
+
+struct uvec give_pp(
+        void
+);
 
 void move_player(
         int             cmd
 );
 
-//void do_cmd(
-//        struct action   cmd
-//);
+void player_shoot(
+        void
+);
 
-void draw_player( );
+void draw_player(
+        void
+);
 
 #endif

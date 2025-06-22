@@ -19,8 +19,16 @@ void init_player(
         player.t = make_t("A^E", dim, player.pos);
 }
 
-void free_player( ) {
+void free_player(
+        void
+) {
         free_t(&player.t);
+}
+
+struct uvec give_pp(
+        void
+) {
+        return player.pos;
 }
 
 void move_player(
@@ -34,8 +42,15 @@ void move_player(
         player.pos.y = mov;
 }
 
-void draw_player( ) {
-        // Would not normally update a texture like this but whatever lol.
+void player_shoot(
+        void
+) {
+        // spawn projectile in front of player location - given no other is there
+}
+
+void draw_player(
+        void
+) {
         player.t.bb.pos.y = player.pos.y;
         blit_img(player.t);
         // Can't error as player is never off screen due to movement checks.       // have not yet implemented said checks but the logic still checks out).

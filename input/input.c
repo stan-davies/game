@@ -10,8 +10,9 @@
 #define CHAR_D          100
 #define CHAR_J          106
 #define CHAR_Q          113
-// this is of course lowercase too
+// these are of course lowercase too
 #define CHAR_LF         10
+#define CHAR_SP         32
 
 static struct {
         char           *base    ;
@@ -95,6 +96,9 @@ static int stoa(
                 break;
         case CHAR_D:
                 move_player(-1);
+                break;
+        case CHAR_SP:
+                player_shoot();
                 break;
         case CHAR_Q:
                 return FALSE;
