@@ -7,6 +7,7 @@
 #include "rend/rend.h"
 #include "rend/text.h"
 #include "world/world.h"
+#include "spawn/spawn.h"
 
 #define ERRF    0
 #define FINE    1

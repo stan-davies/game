@@ -11,6 +11,8 @@ int main() {
                         goto exit;
                 }
 
+                poll_spawn();
+
                 draw_player();
 
                 flush_vb();

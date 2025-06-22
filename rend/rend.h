@@ -26,4 +26,8 @@ int yin_padded(
         int             y
 );
 
+struct uvec give_dim(
+        void
+);
+
 #endif

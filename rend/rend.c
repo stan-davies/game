@@ -9,7 +9,7 @@
 #define PIPE_CHAR       124
 #define PLUS_CHAR       43
 
-#define BTP_PADDING     5       // Border-to-Player padding
+#define BTP_PADDING     3       // Border-to-Player padding
 
 static struct {
         struct pixel   *pxs     ;
@@ -48,7 +48,6 @@ int blit_img(
 
         struct pixel   *write = &(viewbuf.pxs[
                                 t.bb.pos.y * viewbuf.dim.x + t.bb.pos.x]);
-        printf("write head got\n");
         struct pixel   *read  = t.img;
         struct uvec     curr  = { 0, 0 };
 
@@ -58,7 +57,6 @@ int blit_img(
                         curr.y = t.bb.pos.y + (i / t.bb.dim.x);
                         if (vcont(curr)) {
                                 *write = *read;
-                                printf("write %d\n", i);
                         }
                 }
 
@@ -116,5 +114,11 @@ int vcont(
 int yin_padded(
         int             y
 ) {
-        return y - BTP_PADDING > 0 && y + BTP_PADDING < viewbuf.dim.y;
+        return y - BTP_PADDING >= 0 && y + BTP_PADDING < viewbuf.dim.y;
+}
+
+struct uvec give_dim(
+        void
+) {
+        return viewbuf.dim;
 }

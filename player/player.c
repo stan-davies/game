@@ -36,8 +36,7 @@ void move_player(
 
 void draw_player( ) {
         // Would not normally update a texture like this but whatever lol.
-        player.t.bb.pos = player.pos;
-        printf("moved\n");
+        player.t.bb.pos.y = player.pos.y;
         blit_img(player.t);
         // Can't error as player is never off screen due to movement checks.       // have not yet implemented said checks but the logic still checks out).
 }

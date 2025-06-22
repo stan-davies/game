@@ -28,10 +28,6 @@ static void readin(
         void
 );
 
-//static void stoa(
-//        struct action  *act
-//);
-
 static int stoa(
         void
 );
