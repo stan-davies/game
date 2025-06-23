@@ -16,12 +16,9 @@ void prog_init( ) {
         init_vb(dim);
 
         init_carrier();
-
-//        init_world();
 }
 
 void prog_free( ) {
-//        free_world();
         free_carrier();
         free_vb();
         free_player();

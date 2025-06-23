@@ -6,7 +6,6 @@
 #include "player/player.h"
 #include "rend/rend.h"
 #include "rend/text.h"
-#include "world/world.h"
 #include "carrier/carrier.h"
 
 #define ERRF    0
