@@ -8,10 +8,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define EN_SPAWN_RATE   45      // Percentage chance of a spawn each cycle.
-#define MAX_ENTITIES    12
+#define EN_SPAWN_RATE   45      // Percentage chance of enemy spawn each cycle.
+#define MAX_ENTITIES    32
 
+#define ENT_DIM         (struct uvec){ 1, 1 }
 #define ENEMY_TEXT      "^1#^E"
+#define LASER_TEXT      "^>-^E"
 
 #define ENTT_EMPTY      0
 #define ENTT_ENEMY      1
@@ -39,6 +41,10 @@ static struct sub en_sub;
 static struct sub la_sub;               // Useless?
 
 static void spawn_enemy(
+        void
+);
+
+static void find_emp(
         void
 );
 
@@ -83,7 +89,7 @@ void poll_carrier(
 void kill_ent(
         int             y
 ) {
-        carrier.full &= FALSE;
+        carrier.full = FALSE;
 
         struct uvec p;
         int lowx = 100;
@@ -105,6 +111,23 @@ void kill_ent(
         carrier.ents[lowa] = NULL_ENT;
 }
 
+void spawn_laser(
+        struct uvec     pos
+) {
+        if (carrier.full) {
+                return;
+        }
+
+        pos.x++;
+
+        *carrier.write = (struct ent){ 
+                make_t(LASER_TEXT, ENT_DIM, pos),
+                ENTT_LASER
+        };
+
+        find_emp();
+}
+
 static void spawn_enemy(
         void
 ) {
@@ -118,23 +141,24 @@ static void spawn_enemy(
                 .x = en_sub.spawn.x,
                 .y = (seed % (2 * en_sub.spawn.y)) + en_sub.spawn.y
         };
-        struct uvec dim = { 1, 1 };
 
-        // Different texture thing?
-//        char *tex = calloc(6, sizeof(char));
-//        sprintf(tex, "^1%ld^E", cage.write_e - cage.enemies);
+        *carrier.write = (struct ent){ 
+                make_t(ENEMY_TEXT, ENT_DIM, newpos),
+                ENTT_ENEMY
+        };
 
-        carrier.write->tex = make_t(ENEMY_TEXT, dim, newpos);
+        find_emp();
+}
 
-//        free(tex);
-//        tex = NULL;
-
+static void find_emp(
+        void
+) {
         struct ent *pre = carrier.write;
         for (;;) {
                 if ((++carrier.write) - carrier.ents >= MAX_ENTITIES) {
                         carrier.write = carrier.ents;
                 }
-                if (carrier.write->tex.bb.pos.x == -1) {
+                if (carrier.write->typ == ENTT_EMPTY) {
                         break;
                 } else if (carrier.write == pre) {
                         carrier.full = TRUE;
@@ -146,23 +170,23 @@ static void spawn_enemy(
 static void update_ents(
         void
 ) {
-        struct ent curr;
+        struct ent *curr;
         
         for (int a = 0; a < MAX_ENTITIES; ++a) {
-                curr = carrier.ents[a];
+                curr = carrier.ents + a;
 
-                switch (curr.typ) {
+                switch (curr->typ) {
                 case ENTT_ENEMY:
-                        curr.tex.bb.pos.x -= 1;
+                        curr->tex.bb.pos.x -= 1;
                         break;
                 case ENTT_LASER:
-                        curr.tex.bb.pos.y += 1;
+                        curr->tex.bb.pos.x += 1;
                         break;
                 case ENTT_EMPTY:
                 default:
                         continue;
                 }
 
-                blit_img(curr.tex);
+                blit_img(curr->tex);
         }
 }

@@ -6,10 +6,10 @@ int main() {
         prog_init();
 
         for (;;) {
-                if (ERRF == blit_world()) {
-                        printf("Problem blitting world.\n");
-                        goto exit;
-                }
+//                if (ERRF == blit_world()) {
+//                        printf("Problem blitting world.\n");
+//                        goto exit;
+//                }
 
                 poll_carrier();
 

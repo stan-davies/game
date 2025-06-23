@@ -2,6 +2,7 @@
 
 #include "rend/text.h"
 #include "rend/rend.h"
+#include "carrier/carrier.h"
 
 #include <stdio.h>
 
@@ -45,6 +46,7 @@ void move_player(
 void player_shoot(
         void
 ) {
+        spawn_laser(player.pos);
         // spawn projectile in front of player location - given no other is there
 }
 
