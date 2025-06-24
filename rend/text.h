@@ -6,6 +6,11 @@
 struct pixel {
         char            c       ;
         int             col     ;
+
+// Do not use or access, padding bytes.
+        char            p1      ;
+        char            p2      ;
+        char            p3      ;
 };
 
 struct text {

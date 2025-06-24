@@ -20,7 +20,7 @@
 #define ENTT_ENEMY      1
 #define ENTT_LASER      2
 
-#define NULL_ENT        (struct ent){ ENTT_EMPTY, { { 0 }, NULL, { 0 } } }
+#define NULL_ENT        (struct ent){ ENTT_EMPTY, { { 0 }, NULL } }
 
 struct ent {
         int             typ     ;
@@ -30,7 +30,9 @@ struct ent {
 static struct {
         struct ent     *ents    ;
         struct ent     *write   ;
-        int             full    ;
+        int             full    ;       // Not really necessary, known to be
+                                        // full if the write pointer points to
+                                        // a proper entity (not ENT_NULL).
 } carrier;
 
 struct sub {
@@ -58,7 +60,8 @@ static int find_hits(
 );
 
 static void dest_ent(
-        int             ent_i
+//        int             ent_i
+        struct ent     *dent
 );
 
 void init_carrier(
@@ -167,7 +170,7 @@ static void update_ents(
                 case ENTT_LASER:
                         curr->tex.bb.pos.x += 1;
                         if (find_hits(curr->tex.bb.pos)) {
-                                dest_ent(a);
+                                dest_ent(carrier.ents + a);
                                 continue;
                         }
                         break;
@@ -200,19 +203,15 @@ static int find_hits(
                 }
 
                 en_x = typ_find + 2;
-                printf("(%d, %d)\n", *en_x, *(en_x + 1));       // logging
                 if (*en_x <= la_pos.x && *(en_x + 1) == la_pos.y) {
-                        cent = (struct ent *)en_x;
+                        cent = (struct ent *)typ_find;
                         reframe_t(&cent->tex, EXPLODE_TEXT);
                         blit_img(cent->tex);
-
-                        // malloc err
-                        dest_ent((cent - carrier.ents) / sizeof(struct ent));
+                        dest_ent(cent);
                         return TRUE;
                 }
 
 cont:
-                // _Will_ work due to automatically inserted padding.
                 typ_find += sizeof(struct ent) / sizeof(int);
         }
 
@@ -220,13 +219,13 @@ cont:
 }
 
 static void dest_ent(
-        int             ent_i
+        struct ent     *dent
 ) {
         carrier.full = FALSE;
 
-        free_t(&carrier.ents[ent_i].tex);
-        carrier.ents[ent_i] = NULL_ENT;
+        free_t(&dent->tex);
+        *dent = NULL_ENT;
 
         // Essential only for when previously full, easiest to just always do.
-        carrier.write = carrier.ents + ent_i;
+        carrier.write = dent;
 }

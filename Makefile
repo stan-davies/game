@@ -6,11 +6,11 @@ INC = -I .
 
 all : ${OBJ}
 	clear
-	${CMD} $^ ${INC} -o prog
+	${CMD} $^ ${INC} -Wall -pedantic -Wextra -o prog
 
 ${OBJ} : %.o: %.c
 	clear
-	${CMD} ${INC} -g -c $^ -o $@
+	${CMD} ${INC} -Wall -pedantic -Wextra -c $^ -o $@
 
 
 clean :
