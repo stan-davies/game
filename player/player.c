@@ -47,7 +47,6 @@ void player_shoot(
         void
 ) {
         spawn_laser(player.pos);
-        // spawn projectile in front of player location - given no other is there
 }
 
 void draw_player(

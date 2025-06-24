@@ -14,8 +14,8 @@ struct text make_t(
         struct uvec     _pos
 ) {
         struct text t = {
-                .img = calloc(_dim.x * _dim.y, sizeof(struct pixel)),
-                .bb  = { _pos, _dim }
+                .bb  = { _pos, _dim },
+                .img = calloc(_dim.x * _dim.y, sizeof(struct pixel))
         };
 
         struct pixel c = { .col = COL_WHITE };
@@ -42,6 +42,14 @@ struct text make_t(
         }
 
         return t;
+}
+
+void reframe_t(
+        struct text    *t,
+        char           *nimg
+) {
+        free_t(t);
+        *t = make_t(nimg, t->bb.dim, t->bb.pos);
 }
 
 void free_t(

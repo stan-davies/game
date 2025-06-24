@@ -9,14 +9,19 @@ struct pixel {
 };
 
 struct text {
-        struct pixel   *img     ;
         struct rect     bb      ;
+        struct pixel   *img     ;
 };
 
 struct text make_t(
         char           *img     ,
         struct uvec     _dim    ,
         struct uvec     _pos
+);
+
+void reframe_t(
+        struct text    *t,
+        char           *nimg
 );
 
 void free_t(

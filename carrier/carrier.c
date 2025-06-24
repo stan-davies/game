@@ -14,16 +14,17 @@
 #define ENT_DIM         (struct uvec){ 1, 1 }
 #define ENEMY_TEXT      "^1#^E"
 #define LASER_TEXT      "^>-^E"
+#define EXPLODE_TEXT    "^1*^E"
 
 #define ENTT_EMPTY      0
 #define ENTT_ENEMY      1
 #define ENTT_LASER      2
 
-#define NULL_ENT        (struct ent){ { NULL, { 0 } }, ENTT_EMPTY }
+#define NULL_ENT        (struct ent){ ENTT_EMPTY, { { 0 }, NULL, { 0 } } }
 
 struct ent {
-        struct text     tex     ;
         int             typ     ;
+        struct text     tex     ;
 };
 
 static struct {
@@ -50,6 +51,14 @@ static void find_emp(
 
 static void update_ents(
         void
+);
+
+static int find_hits(
+        struct uvec     la_pos
+);
+
+static void dest_ent(
+        int             ent_i
 );
 
 void init_carrier(
@@ -86,31 +95,6 @@ void poll_carrier(
         update_ents();
 }
 
-void kill_ent(
-        int             y
-) {
-        carrier.full = FALSE;
-
-        struct uvec p;
-        int lowx = 100;
-        int lowa = -1;
-
-        for (int a = 0; a < MAX_ENTITIES; ++a) {
-                p = carrier.ents[a].tex.bb.pos;
-                if (p.y == y && p.x < lowx) {
-                        lowx = p.x;
-                        lowa = a;
-                }
-        }
-
-        if (-1 == lowa) {
-                return;
-        }
-
-        free_t(&carrier.ents[lowa].tex);
-        carrier.ents[lowa] = NULL_ENT;
-}
-
 void spawn_laser(
         struct uvec     pos
 ) {
@@ -121,8 +105,8 @@ void spawn_laser(
         pos.x++;
 
         *carrier.write = (struct ent){ 
-                make_t(LASER_TEXT, ENT_DIM, pos),
-                ENTT_LASER
+                .typ = ENTT_LASER,
+                .tex = make_t(LASER_TEXT, ENT_DIM, pos)
         };
 
         find_emp();
@@ -143,8 +127,8 @@ static void spawn_enemy(
         };
 
         *carrier.write = (struct ent){ 
-                make_t(ENEMY_TEXT, ENT_DIM, newpos),
-                ENTT_ENEMY
+                .typ = ENTT_ENEMY,
+                .tex = make_t(ENEMY_TEXT, ENT_DIM, newpos)
         };
 
         find_emp();
@@ -178,9 +162,14 @@ static void update_ents(
                 switch (curr->typ) {
                 case ENTT_ENEMY:
                         curr->tex.bb.pos.x -= 1;
+                        // If at player -> lose.
                         break;
                 case ENTT_LASER:
                         curr->tex.bb.pos.x += 1;
+                        if (find_hits(curr->tex.bb.pos)) {
+                                dest_ent(a);
+                                continue;
+                        }
                         break;
                 case ENTT_EMPTY:
                 default:
@@ -189,4 +178,55 @@ static void update_ents(
 
                 blit_img(curr->tex);
         }
+}
+
+static int find_hits(
+        struct uvec     la_pos
+) {
+        int *typ_find = &carrier.ents->typ;
+        int *base = typ_find;
+
+        uint *en_x;
+
+        struct ent *cent;
+
+        for (;;) {
+                if ((typ_find - base) / sizeof(struct ent) >= MAX_ENTITIES) {
+                        break;
+                }
+
+                if (*typ_find != ENTT_ENEMY) {
+                        goto cont;
+                }
+
+                en_x = typ_find + 2;
+                printf("(%d, %d)\n", *en_x, *(en_x + 1));       // logging
+                if (*en_x <= la_pos.x && *(en_x + 1) == la_pos.y) {
+                        cent = (struct ent *)en_x;
+                        reframe_t(&cent->tex, EXPLODE_TEXT);
+                        blit_img(cent->tex);
+
+                        // malloc err
+                        dest_ent((cent - carrier.ents) / sizeof(struct ent));
+                        return TRUE;
+                }
+
+cont:
+                // _Will_ work due to automatically inserted padding.
+                typ_find += sizeof(struct ent) / sizeof(int);
+        }
+
+        return FALSE;
+}
+
+static void dest_ent(
+        int             ent_i
+) {
+        carrier.full = FALSE;
+
+        free_t(&carrier.ents[ent_i].tex);
+        carrier.ents[ent_i] = NULL_ENT;
+
+        // Essential only for when previously full, easiest to just always do.
+        carrier.write = carrier.ents + ent_i;
 }
