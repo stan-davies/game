@@ -14,7 +14,7 @@
 #define ENT_DIM         (struct uvec){ 1, 1 }
 #define ENEMY_TEXT      "^1#^E"
 #define LASER_TEXT      "^>-^E"
-#define EXPLODE_TEXT    "^1*^E"
+#define EXPLODE_TEXT    "^;*^E"
 
 #define ENTT_EMPTY      0
 #define ENTT_ENEMY      1
